@@ -1,130 +1,90 @@
-# Autonomous Insurance Claims Processing Agent
+# Autonomous Insurance Claims Processing Agent (FNOL)
 
-This project implements a lightweight AI agent that processes FNOL (First Notice of Loss) insurance documents.
+Lightweight autonomous claims processing agent for FNOL (First Notice of Loss) PDFs.
 
-It extracts key fields, detects missing data, routes the claim to the correct workflow, and provides reasoning for the decision.
+It extracts key claim fields, detects missing mandatory data, routes the claim via deterministic rules, and generates a short reasoning explanation. Includes a Streamlit UI and deterministic routing demo tests.
 
 ## Features
 
-- PDF FNOL document ingestion
-- Structured field extraction using Gemini
-- Missing field detection
-- Rule-based routing
-- AI-generated reasoning
-- Streamlit UI for demo
-- JSON output
+- PDF FNOL ingestion (pdfplumber)
+- Structured field extraction using Gemini (JSON)
+- Missing mandatory field detection
+- Deterministic rule-based routing
+- AI-generated reasoning (Gemini)
+- Final output in the required assessment JSON format
+- Streamlit one-page UI + JSON download
+- Deterministic routing tests (no LLM)
 
-## Architecture
+## Architecture (Lightweight Hexagonal / Ports & Adapters)
 
-The system is designed as a lightweight modular AI agent pipeline.
+The system is structured using a minimal ports & adapters layout so the LLM can be swapped later (Gemini/OpenAI/local) without changing domain logic.
 
 ```
       ┌────────────────────┐
       │   Streamlit UI     │
-      │ Upload FNOL PDF    │
+      │  (adapters/)       │
       └─────────┬──────────┘
                 │
                 ▼
       ┌────────────────────┐
-      │  PDF Parser        │
-      │ (pdfplumber)       │
+      │ Application UseCase│
+      │ ProcessClaimUseCase│
+      │ (application/)     │
       └─────────┬──────────┘
                 │
-                ▼
-      ┌────────────────────┐
-      │ Text Cleaner       │
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Extraction Agent   │
-      │ Gemini API         │
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Schema Validation  │
-      │ Pydantic           │
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Missing Field Check│
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Routing Engine     │
-      │ Rule-based logic   │
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Reasoning Agent    │
-      │ Gemini API         │
-      └─────────┬──────────┘
-                │
-                ▼
-      ┌────────────────────┐
-      │ Final JSON Output  │
-      └────────────────────┘
+                ├──────────────┐
+                ▼              ▼
+      ┌────────────────┐  ┌────────────────────┐
+      │ Parser Port     │  │ LLM Port           │
+      │ + PDF Adapter   │  │ + Gemini Adapter   │
+      │ (infrastructure)│  │ (infrastructure)   │
+      └─────────┬───────┘  └─────────┬──────────┘
+                │                    │
+                ▼                    ▼
+      ┌──────────────────────────────────────────┐
+      │ Domain (pure Python)                     │
+      │ - ClaimFields model                      │
+      │ - find_missing_fields()                  │
+      │ - determine_route()                      │
+      └──────────────────────────────────────────┘
 ```
 
-### Flow Summary
+### Folder structure
 
-1. User uploads FNOL PDF via Streamlit UI
-2. PDF is parsed into raw text
-3. Text is cleaned to be LLM-friendly
-4. Gemini extracts structured fields (JSON)
-5. Fields validated via Pydantic schema
-6. Missing mandatory fields detected
-7. Rule engine determines routing
-8. Gemini generates explanation
-9. Final JSON displayed + downloadable
+```
+domain/
+  models.py
+  routing_rules.py
 
-### Design Principles
+application/
+  ports/
+    llm_port.py
+    document_parser_port.py
+  use_cases/
+    process_claim.py
 
-- Lightweight (assessment-focused)
-- Deterministic routing logic
-- LLM used only for extraction + reasoning
-- Modular agent-based structure
-- Easy to extend to production
+infrastructure/
+  llm/
+    gemini_adapter.py
+  parsing/
+    pdf_parser_adapter.py
 
-## Tech Stack
+adapters/
+  streamlit_ui.py
 
-- Python
-- Gemini API
-- Streamlit
-- Pydantic
-- pdfplumber
+app/
+  main.py
 
-## How to Run
+tests/
+  test_routing.py
 
-### Install
-
-```bash
-pip install -r requirements.txt
+# Backwards-compatible entrypoints
+main.py
+app.py
+tests_routing.py
 ```
 
-### Set API key
-
-```bash
-export GEMINI_API_KEY=your_key
-```
-
-### Run CLI
-
-```bash
-python main.py
-```
-
-### Run UI
-
-```bash
-streamlit run app.py
-```
-
-## Output Format
+## Output Format (assessment requirement)
 
 ```json
 {
@@ -135,6 +95,49 @@ streamlit run app.py
 }
 ```
 
+## Setup
+
+### Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Set Gemini API key
+
+```bash
+export GEMINI_API_KEY="YOUR_KEY"
+```
+
+## Run (CLI)
+
+Backwards-compatible entrypoint:
+
+```bash
+python main.py
+```
+
+This prints the final JSON output.
+
+## Run (UI)
+
+Backwards-compatible Streamlit entrypoint:
+
+```bash
+streamlit run app.py
+```
+
+Upload an FNOL PDF, click **Process Claim**, then view results and download JSON.
+
+## Run routing tests (deterministic demo)
+
+These tests validate routing behavior for all routes without calling Gemini.
+
+```bash
+python tests_routing.py
+```
+
 ## Notes
 
-This is a lightweight technical assessment implementation and not a production system.
+- Routing is deterministic (pure domain logic); LLM is used only for extraction + reasoning.
+- This is an assessment-focused implementation (not production hardening like OCR, table extraction, PHI controls, etc.).
