@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+
+# Virtual env
+venv/
+.venv/
+
+# Env secrets
+.env
+
+# Streamlit
+.streamlit/
+
+# Outputs / local artifacts
+outputs/
