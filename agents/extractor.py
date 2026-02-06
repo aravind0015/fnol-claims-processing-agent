@@ -6,9 +6,9 @@ from utils.prompts import EXTRACTION_PROMPT
 from utils.schema import ClaimFields
 from dotenv import load_dotenv
 load_dotenv()
-
-
-client = genai.Client(api_key="AIzaSyD89VsYBxvkc359HRUk-kkoaAWWlpSJtcg")
+import os
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
 
 
 def extract_fields_from_text(text: str) -> ClaimFields:

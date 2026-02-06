@@ -3,9 +3,10 @@ from google import genai
 from utils.schema import ClaimFields
 from dotenv import load_dotenv
 load_dotenv()
+import os
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
 
-
-client = genai.Client(api_key="AIzaSyD89VsYBxvkc359HRUk-kkoaAWWlpSJtcg")
 
 
 def generate_reasoning(claim: ClaimFields, route: str, missing_fields: list[str]) -> str:
