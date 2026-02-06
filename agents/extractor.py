@@ -4,6 +4,9 @@ from google import genai
 
 from utils.prompts import EXTRACTION_PROMPT
 from utils.schema import ClaimFields
+from dotenv import load_dotenv
+load_dotenv()
+
 
 client = genai.Client(api_key="AIzaSyD89VsYBxvkc359HRUk-kkoaAWWlpSJtcg")
 

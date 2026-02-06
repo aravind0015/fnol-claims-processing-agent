@@ -73,7 +73,7 @@ def build_use_case() -> ProcessClaimUseCase:
             "GEMINI_API_KEY is not set. Export it first: export GEMINI_API_KEY=..."
         )
 
-    llm = GeminiLLM(api_key=api_key)
+    llm = GeminiLLM()
     parser = PdfParserAdapter()
     return ProcessClaimUseCase(llm=llm, parser=parser, extraction_prompt=EXTRACTION_PROMPT)
 

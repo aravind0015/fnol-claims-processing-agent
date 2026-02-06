@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+import os
 import json
 from dataclasses import asdict
 from typing import Any, Dict, Optional
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+assert os.getenv("GEMINI_API_KEY") is not None, "GEMINI_API_KEY not loaded"
 
 from application.ports.document_parser_port import DocumentParserPort
 from application.ports.llm_port import LLMPort
