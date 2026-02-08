@@ -5,8 +5,8 @@ import os
 from typing import Any, Dict
 
 from application.use_cases.process_claim import ProcessClaimUseCase
-from infrastructure.llm.gemini_adapter import GeminiLLM
-from infrastructure.parsing.pdf_parser_adapter import PdfParserAdapter
+from adapters.llm.gemini_adapter import GeminiLLM
+from adapters.parser.pdf_parser_adapter import PdfParserAdapter
 
 EXTRACTION_PROMPT = """
 You are an expert insurance FNOL (First Notice of Loss) document parser.

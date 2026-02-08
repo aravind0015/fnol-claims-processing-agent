@@ -44,7 +44,7 @@ Key snippets (may appear in the document):
     try:
         data = json.loads(raw_output)
     except json.JSONDecodeError:
-        print("\n⚠️ JSON parse failed. Raw output:\n")
+        print("\n JSON parse failed. Raw output:\n")
         print(raw_output)
         raise
 

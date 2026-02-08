@@ -9,7 +9,7 @@ from app.main import process_claim
 
 st.set_page_config(page_title="FNOL Claims Agent", layout="wide")
 
-st.title("🧾 Autonomous Insurance Claims Agent")
+st.title(" Autonomous Insurance Claims Agent")
 st.write("Upload an FNOL PDF to extract fields and route the claim.")
 
 if "result" not in st.session_state:

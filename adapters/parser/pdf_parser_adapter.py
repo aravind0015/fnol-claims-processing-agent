@@ -4,7 +4,7 @@ import re
 
 import pdfplumber
 
-from application.ports.document_parser_port import DocumentParserPort
+from ports.document_parser_port import DocumentParserPort
 
 
 class PdfParserAdapter(DocumentParserPort):

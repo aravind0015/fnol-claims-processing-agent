@@ -19,6 +19,15 @@ It extracts key claim fields, detects missing mandatory data, routes the claim v
 
 The system is structured using a minimal ports & adapters layout so the LLM can be swapped later (Gemini/OpenAI/local) without changing domain logic.
 
+Ports:
+- ports/llm_port.py
+- ports/document_parser_port.py
+
+Adapters:
+- adapters/llm/gemini_adapter.py
+- adapters/parser/pdf_parser_adapter.py
+- adapters/ui/streamlit_ui.py
+
 ```
       ┌────────────────────┐
       │   Streamlit UI     │
@@ -37,7 +46,7 @@ The system is structured using a minimal ports & adapters layout so the LLM can 
       ┌────────────────┐  ┌────────────────────┐
       │ Parser Port     │  │ LLM Port           │
       │ + PDF Adapter   │  │ + Gemini Adapter   │
-      │ (infrastructure)│  │ (infrastructure)   │
+      │ (ports/adapters)│  │ (ports/adapters)   │
       └─────────┬───────┘  └─────────┬──────────┘
                 │                    │
                 ▼                    ▼
@@ -57,20 +66,20 @@ domain/
   routing_rules.py
 
 application/
-  ports/
-    llm_port.py
-    document_parser_port.py
   use_cases/
     process_claim.py
 
-infrastructure/
-  llm/
-    gemini_adapter.py
-  parsing/
-    pdf_parser_adapter.py
+ports/
+  llm_port.py
+  document_parser_port.py
 
 adapters/
-  streamlit_ui.py
+  llm/
+    gemini_adapter.py
+  parser/
+    pdf_parser_adapter.py
+  ui/
+    streamlit_ui.py
 
 app/
   main.py
@@ -97,9 +106,11 @@ tests_routing.py
 
 ## Setup
 
-### Install dependencies
+### Install dependencies & activate venv
 
 ```bash
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -114,6 +125,7 @@ export GEMINI_API_KEY="YOUR_KEY"
 Backwards-compatible entrypoint:
 
 ```bash
+source venv/bin/activate
 python main.py
 ```
 
@@ -124,6 +136,7 @@ This prints the final JSON output.
 Backwards-compatible Streamlit entrypoint:
 
 ```bash
+source venv/bin/activate
 streamlit run app.py
 ```
 
@@ -134,7 +147,8 @@ Upload an FNOL PDF, click **Process Claim**, then view results and download JSON
 These tests validate routing behavior for all routes without calling Gemini.
 
 ```bash
-python tests_routing.py
+source venv/bin/activate
+python -m tests.test_routing
 ```
 
 ## Notes

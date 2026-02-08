@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from google import genai
 
-from application.ports.llm_port import LLMPort
+from ports.llm_port import LLMPort
 
 load_dotenv(override=True)
 

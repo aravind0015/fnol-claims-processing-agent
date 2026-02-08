@@ -11,8 +11,8 @@ load_dotenv()
 
 assert os.getenv("GEMINI_API_KEY") is not None, "GEMINI_API_KEY not loaded"
 
-from application.ports.document_parser_port import DocumentParserPort
-from application.ports.llm_port import LLMPort
+from ports.document_parser_port import DocumentParserPort
+from ports.llm_port import LLMPort
 from domain.models import ClaimFields
 from domain.routing_rules import determine_route, find_missing_fields
 
